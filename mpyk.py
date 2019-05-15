@@ -41,12 +41,12 @@ def call_api(trams: Optional[List[str]] = None,
 
 def to_csv_row(call_time: datetime, json_resp: Dict[str, Union[str, float, int]]) -> str:
     return ";".join([call_time.isoformat(),
-                     json_resp.get("type", NULL_VAL), json_resp.get("name", NULL_VAL),
+                     str(json_resp.get("type", NULL_VAL)), str(json_resp.get("name", NULL_VAL)),
                      str(json_resp.get("k", NULL_VAL)),
                      str(json_resp.get("x", NULL_VAL)), str(json_resp.get("y", NULL_VAL))])
 
 
-def handle_output(lines: List[str], csv_file: [Optional[str]] = None) -> None:
+def handle_output(lines: List[str], csv_file: Optional[str] = None) -> None:
     if csv_file:
         csv_dir = path.dirname(path.abspath(csv_file))
         if path.exists(csv_dir):
