@@ -35,6 +35,7 @@ def call_api(trams: Optional[List[str]] = None,
 
     response = requests.post(url=API_URL, data=req_body)
     if response.ok:
+        logging.debug(f"Got API response: {response.status_code}")
         return response.json()
     else:
         raise ValueError(f"Error from API: {response.status_code}: {response.content}")
@@ -62,8 +63,8 @@ def handle_output(lines: List[str], csv_file: Optional[str] = None) -> None:
             print(l)
 
 
-def _get_curr_time(utc: bool) -> datetime:
-    return datetime.utcnow() if utc else datetime.now(POLAND_TIMEZONE)
+def _get_curr_time(in_utc: bool) -> datetime:
+    return datetime.utcnow() if in_utc else datetime.now(POLAND_TIMEZONE)
 
 
 def _setup_logger(level: int = logging.INFO, log_file: Optional[str] = None) -> None:
@@ -94,9 +95,11 @@ def _parse_args() -> argparse.Namespace:
 def main(csv: Optional[str], log: Optional[str], utc: bool, debug: bool) -> None:
     _setup_logger(level=logging.INFO if not debug else logging.DEBUG, log_file=log)
     request_time = _get_curr_time(utc)
+    logging.debug("Retrieving bus and trams data...")
     try:
         api_response = call_api(trams=ALL_TRAMS, buses=ALL_BUSES)
         csv_lines = [to_csv_row(request_time, line) for line in api_response]
+        logging.debug(f"Retrieved {len(csv_lines)} lines of data, storing at: {csv}")
         handle_output(csv_lines, csv_file=csv)
         total_time = (_get_curr_time(utc) - request_time).total_seconds()
         logging.info("Retrieved and stored data in {:.3f}s!".format(total_time))
