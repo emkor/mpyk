@@ -13,7 +13,7 @@ Simple Python 3 CLI script for retrieving Wrocław MPK trams and buses real-time
 
 ## virtualenv-based setup
 - `git clone https://github.com/emkor/mpyk.git && cd mpyk`
-- `make config`
+- `make venv`
 - using virtualenv Python executable:
     - `.venv/mpyk/bin/python mpyk.py --utc --csv myData.csv --log myLogs.log`
 - using virtualenv session:

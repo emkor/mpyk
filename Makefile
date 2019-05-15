@@ -1,10 +1,10 @@
-all: test build
+all: test
 
 PY3 = python3
 VENV_DIR = .venv/mpyk
 VENV_PY = .venv/mpyk/bin/python
 
-config:
+venv:
 	@echo "---- Cleanup ----"
 	@rm -rf $(VENV_DIR)
 	@mkdir -p $(VENV_DIR)
@@ -19,4 +19,4 @@ test:
 	@echo "---- Testing ---- "
 	@$(VENV_PY) -m mypy --ignore-missing-imports .
 
-.PHONY: all config test
+.PHONY: all venv test
