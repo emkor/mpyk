@@ -85,16 +85,15 @@ def _parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def cli_main() -> None:
-    args = _parse_args()
-    _setup_logger(level=logging.INFO if not args.debug else logging.DEBUG, log_file=args.log)
-    request_time = datetime.utcnow() if args.utc else datetime.now()
+def main(csv: Optional[str], log: Optional[str], utc: bool, debug: bool) -> None:
+    _setup_logger(level=logging.INFO if not debug else logging.DEBUG, log_file=log)
+    request_time = datetime.utcnow() if utc else datetime.now()
     try:
         api_response = call_api(trams=ALL_TRAMS, buses=ALL_BUSES)
         csv_lines = [to_csv_row(request_time, line) for line in api_response]
-        handle_output(csv_lines, csv_file=args.csv)
-        total_time = ((datetime.utcnow() if args.utc else datetime.now()) - request_time).total_seconds()
-        logging.info(f"Retrieved and stored data in {total_time}s!")
+        handle_output(csv_lines, csv_file=csv)
+        total_time = ((datetime.utcnow() if utc else datetime.now()) - request_time).total_seconds()
+        logging.info("Retrieved and stored data in {:.3f}s!".format(total_time))
     except Exception as e:
         logging.error(f"{e}")
         exit(1)
@@ -102,4 +101,5 @@ def cli_main() -> None:
 
 
 if __name__ == '__main__':
-    cli_main()
+    args = _parse_args()
+    main(args.csv, args.log, args.utc, args.debug)
