@@ -41,14 +41,14 @@ def call_api(trams: Optional[List[str]] = None,
         raise ValueError(f"Error from API: {response.status_code}: {response.content}")
 
 
-def to_csv_row(call_time: datetime, json_resp: Dict[str, Union[str, float, int]]) -> str:
+def _to_csv_row(call_time: datetime, json_resp: Dict[str, Union[str, float, int]]) -> str:
     return ";".join([call_time.isoformat(),
                      str(json_resp.get("type", NULL_VAL)), str(json_resp.get("name", NULL_VAL)),
                      str(json_resp.get("k", NULL_VAL)),
                      str(json_resp.get("x", NULL_VAL)), str(json_resp.get("y", NULL_VAL))])
 
 
-def handle_output(lines: List[str], csv_file: Optional[str] = None) -> None:
+def _handle_output(lines: List[str], csv_file: Optional[str] = None) -> None:
     if csv_file:
         csv_dir = path.dirname(path.abspath(csv_file))
         if path.exists(csv_dir):
@@ -67,6 +67,15 @@ def _get_curr_time(in_utc: bool) -> datetime:
     return datetime.utcnow() if in_utc else datetime.now(POLAND_TIMEZONE)
 
 
+def _get_and_store(request_time: datetime, csv_path: str, in_utc: bool) -> None:
+    api_response = call_api(trams=ALL_TRAMS, buses=ALL_BUSES)
+    csv_lines = [_to_csv_row(request_time, line) for line in api_response]
+    logging.debug(f"Retrieved {len(csv_lines)} lines of data, storing at: {csv_path}")
+    _handle_output(csv_lines, csv_file=csv_path)
+    total_time = (_get_curr_time(in_utc) - request_time).total_seconds()
+    logging.info("Retrieved {} lines of data and stored in {:.3f}s!".format(len(csv_lines), total_time))
+
+
 def _setup_logger(level: int = logging.INFO, log_file: Optional[str] = None) -> None:
     if log_file is not None:
         log_directory = path.dirname(path.abspath(log_file))
@@ -82,6 +91,10 @@ def _setup_logger(level: int = logging.INFO, log_file: Optional[str] = None) -> 
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Get real-time location for Wroclaw MPK trams and buses')
+    parser.add_argument("--each", type=float, default=None,
+                        help="Enables continuous mode: number of seconds  between consecutive calls for location data")
+    parser.add_argument("--dir", type=str, default=None,
+                        help="In continuous mode: directory where daily files shall be stored; default: current dir")
     parser.add_argument("--csv", type=str, default=None,
                         help="Append data to given file (if exists) instead of printing to stdout")
     parser.add_argument("--log", type=str, default=None,
@@ -92,23 +105,37 @@ def _parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main(csv: Optional[str], log: Optional[str], utc: bool, debug: bool) -> None:
-    _setup_logger(level=logging.INFO if not debug else logging.DEBUG, log_file=log)
-    request_time = _get_curr_time(utc)
+def main(each_sec: Optional[int], data_dir: Optional[str],
+         csv_path: Optional[str], log_path: Optional[str],
+         in_utc: bool, debug: bool) -> None:
+    _setup_logger(level=logging.INFO if not debug else logging.DEBUG, log_file=log_path)
+
     logging.debug("Retrieving bus and trams data...")
-    try:
-        api_response = call_api(trams=ALL_TRAMS, buses=ALL_BUSES)
-        csv_lines = [to_csv_row(request_time, line) for line in api_response]
-        logging.debug(f"Retrieved {len(csv_lines)} lines of data, storing at: {csv}")
-        handle_output(csv_lines, csv_file=csv)
-        total_time = (_get_curr_time(utc) - request_time).total_seconds()
-        logging.info("Retrieved and stored data in {:.3f}s!".format(total_time))
-    except Exception as e:
-        logging.error(f"{e}")
-        exit(1)
+    if each_sec is not None:
+        if each_sec < 0.5 or each_sec > 86400:
+            raise ValueError("Argument each must have value between 0.5 and 86400")
+        if csv_path is not None:
+            raise ValueError("Argument csv must not be set in continuous mode")
+        else:
+            data_dir = data_dir if data_dir is not None and path.isdir(path.abspath(data_dir)) else path.abspath(".")
+            while True:
+                req_time = _get_curr_time(in_utc)
+                csv_path = path.join(data_dir, req_time.date().isoformat() + ".csv")
+                try:
+                    _get_and_store(req_time, csv_path, in_utc)
+                except Exception as e:
+                    logging.warning(e)
+                time.sleep(each_sec)
+    else:
+        try:
+            req_time = _get_curr_time(in_utc)
+            _get_and_store(req_time, csv_path, in_utc)
+        except Exception as e:
+            logging.error(e)
+            exit(1)
     exit(0)
 
 
 if __name__ == '__main__':
     args = _parse_args()
-    main(args.csv, args.log, args.utc, args.debug)
+    main(args.each, args.dir, args.csv, args.log, args.utc, args.debug)

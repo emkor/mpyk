@@ -2,7 +2,7 @@
 Simple Python 3 CLI script for retrieving Wrocław MPK trams and buses real-time location
 
 ## prerequisites
-- Unix, `python3` with `pip`, `make` tool
+- Unix, `make`, `git`, `python3` with `pip`
 
 ## quick start (global installation)
 - setup:
@@ -10,6 +10,7 @@ Simple Python 3 CLI script for retrieving Wrocław MPK trams and buses real-time
     - `sudo pip install -r requirements.txt && chmod u+x mpyk.py`
 - usage:
     - `./mpyk.py --utc --csv myData.csv --log myLogs.log`
+    - for continuous mode: `./mpyk.py --each 10 --utc --dir . --log myLogs.log`
 
 ## virtualenv-based setup
 - `git clone https://github.com/emkor/mpyk.git && cd mpyk`
