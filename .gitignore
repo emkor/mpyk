@@ -3,3 +3,4 @@
 *.iml
 
 .mypy_cache
+.venv
