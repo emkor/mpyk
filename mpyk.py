@@ -7,6 +7,7 @@ from datetime import datetime
 from os import path
 from typing import List, Dict, Union, Optional
 
+import pytz
 import requests
 
 API_URL = "http://mpk.wroc.pl/position.php"
@@ -17,7 +18,7 @@ ALL_BUSES = ['a', 'c', 'd', 'k', 'n', '100', '101', '102', '103', '104', '105', 
              '255', '257', '259', '319', '325', '602', '607', '609', '612', '715']
 ALL_TRAMS = ['0l', '0p', 't4', 't9', 'zlt', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '14', '15', '17',
              '20', '23', '24', '31', '32', '33']
-
+POLAND_TIMEZONE = pytz.timezone("Europe/Warsaw")
 NULL_VAL = "null"
 
 
@@ -61,6 +62,10 @@ def handle_output(lines: List[str], csv_file: Optional[str] = None) -> None:
             print(l)
 
 
+def _get_curr_time(utc: bool) -> datetime:
+    return datetime.utcnow() if utc else datetime.now(POLAND_TIMEZONE)
+
+
 def _setup_logger(level: int = logging.INFO, log_file: Optional[str] = None) -> None:
     if log_file is not None:
         log_directory = path.dirname(path.abspath(log_file))
@@ -80,19 +85,20 @@ def _parse_args() -> argparse.Namespace:
                         help="Append data to given file (if exists) instead of printing to stdout")
     parser.add_argument("--log", type=str, default=None,
                         help="Log events to file instead of stdout")
-    parser.add_argument("--utc", action='store_true', help="Use UTC time for data")
+    parser.add_argument("--utc", action='store_true',
+                        help="Use UTC time for data instead of Poland time; logs are always in UTC")
     parser.add_argument("--debug", action='store_true', help="Increase log verbosity")
     return parser.parse_args()
 
 
 def main(csv: Optional[str], log: Optional[str], utc: bool, debug: bool) -> None:
     _setup_logger(level=logging.INFO if not debug else logging.DEBUG, log_file=log)
-    request_time = datetime.utcnow() if utc else datetime.now()
+    request_time = _get_curr_time(utc)
     try:
         api_response = call_api(trams=ALL_TRAMS, buses=ALL_BUSES)
         csv_lines = [to_csv_row(request_time, line) for line in api_response]
         handle_output(csv_lines, csv_file=csv)
-        total_time = ((datetime.utcnow() if utc else datetime.now()) - request_time).total_seconds()
+        total_time = (_get_curr_time(utc) - request_time).total_seconds()
         logging.info("Retrieved and stored data in {:.3f}s!".format(total_time))
     except Exception as e:
         logging.error(f"{e}")
