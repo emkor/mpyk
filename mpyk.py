@@ -42,7 +42,7 @@ def call_api(trams: Optional[List[str]] = None,
 
 
 def _to_csv_row(call_time: datetime, json_resp: Dict[str, Union[str, float, int]]) -> str:
-    return ";".join([call_time.isoformat(),
+    return ";".join([call_time.replace(microsecond=0).isoformat(),
                      str(json_resp.get("type", NULL_VAL)), str(json_resp.get("name", NULL_VAL)),
                      str(json_resp.get("k", NULL_VAL)),
                      str(json_resp.get("x", NULL_VAL)), str(json_resp.get("y", NULL_VAL))])
