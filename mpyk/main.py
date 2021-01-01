@@ -58,6 +58,8 @@ def main(each_sec: Optional[int], data_dir: Optional[str],
                     logging.warning(e)
                 time.sleep(each_sec)
     else:
+        if csv_path is None:
+            raise ValueError(f"Given path to csv file is empty: {csv_path}")
         try:
             req_time = _get_curr_time(in_utc)
             _get_and_store(req_time, csv_path, in_utc)

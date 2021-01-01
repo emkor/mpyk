@@ -1,5 +1,5 @@
 config: clean setup install
-test: ut lint at
+test: lint at
 all: test build
 
 PY3 = python3
@@ -18,16 +18,12 @@ setup:
 	@$(VENV_PY3) -m pip install --upgrade pip wheel setuptools
 
 install:
-	@echo "---- Installing napi-py in virtualenv ---- "
+	@echo "---- Installing mpyk in virtualenv ---- "
 	@$(VENV_PY3) -m pip install -e .[dev]
 
 lint:
 	@echo "---- Running linter ---- "
-	@$(VENV_PY3) -m mypy --ignore-missing-imports napi
-
-ut:
-	@echo "---- Running unit tests ---- "
-	@$(VENV_PY3) -m pytest -ra -v -s test/unit
+	@$(VENV_PY3) -m mypy --ignore-missing-imports mpyk
 
 at:
 	@echo "---- Running acceptance tests (requires napi-py on global PATH) ---- "

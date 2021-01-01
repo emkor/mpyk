@@ -34,7 +34,7 @@ def call_api(trams: Optional[List[str]] = None,
         logging.debug(f"Got API response: {response.status_code}")
         return response.json()
     else:
-        raise ValueError(f"Error from API: {response.status_code}: {response.content}")
+        raise ValueError(f"Error from API: {response.status_code} {str(response.content)}")
 
 
 def _to_csv_row(call_time: datetime, json_resp: Dict[str, Union[str, float, int]]) -> str:
