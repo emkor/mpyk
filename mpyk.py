@@ -10,7 +10,7 @@ from typing import List, Dict, Union, Optional
 import pytz
 import requests
 
-API_URL = "http://mpk.wroc.pl/position.php"
+API_URL = "https://mpk.wroc.pl/bus_position"
 ALL_BUSES = ['a', 'c', 'd', 'k', 'n', '100', '101', '102', '103', '104', '105', '106', '107', '108', '109', '110',
              '111', '112', '113', '114', '115', '116', '118', '119', '120', '121', '122', '124', '125', '126', '127',
              '128', '129', '130', '131', '132', '133', '134', '136', '140', '141', '142', '144', '145', '146', '147',
