@@ -8,7 +8,7 @@ VENV_PY3 = .venv/$(shell basename $$PWD)/bin/python3
 
 clean:
 	@echo "---- Doing cleanup ----"
-	@rm -rf .venv .mypy_cache *.egg-info build dist
+	@rm -rf .venv .mypy_cache .pytest_cache *.egg-info build dist
 	@mkdir -p .venv
 
 setup:

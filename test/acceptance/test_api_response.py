@@ -2,8 +2,7 @@ from typing import Any, Dict, List
 
 import pytest
 
-from mpyk import call_api
-from mpyk.mpyk import ALL_TRAMS, ALL_BUSES
+from mpyk import MpykClient, ALL_TRAMS, ALL_BUSES
 
 MIN_EXPECTED_POSITIONS_COUNT = 3
 EXPECTED_KEYS = {"name", "type", "k", "x", "y"}
@@ -11,7 +10,8 @@ EXPECTED_KEYS = {"name", "type", "k", "x", "y"}
 
 @pytest.fixture(scope="session")
 def all_units_api_response() -> List[Dict[str, Any]]:
-    return call_api(ALL_TRAMS, ALL_BUSES)
+    client = MpykClient()
+    return client.get_all_positions_raw()
 
 
 def test_api_should_return_minimal_amount_of_data(all_units_api_response: List[Dict[str, Any]]):
