@@ -49,5 +49,6 @@ class MpykClient:
         else:
             raise ValueError(f"Error from API: {response.status_code} {str(response.content)}")
 
-    def _parse_into_obj(self, responses: API_RET_TYPE, timestamp: datetime) -> List[MpykTransLoc]:
+    @classmethod
+    def _parse_into_obj(cls, responses: API_RET_TYPE, timestamp: datetime) -> List[MpykTransLoc]:
         return [MpykTransLoc.parse(raw_resp, timestamp) for raw_resp in responses]

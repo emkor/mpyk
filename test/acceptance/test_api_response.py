@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any, Dict, List
 
 import pytest
@@ -34,3 +35,12 @@ def test_api_should_return_no_unexpected_lines(all_units_api_response: List[Dict
 
     resp_bus_lines = {dp['name'] for dp in resp if dp['type'] == 'bus'}
     assert resp_bus_lines.issubset(ALL_BUSES), f"API returned some unexpected bus lines: {resp_bus_lines}"
+
+
+def test_should_parse_all_raw_responses_into_objects(all_units_api_response: List[Dict[str, Any]]):
+    ts = datetime.utcnow()
+    objects = MpykClient._parse_into_obj(all_units_api_response, ts)
+    assert objects
+    assert len(objects) == len(all_units_api_response), \
+        f"Not all raw responses ({len(all_units_api_response)}) were converted to objects ({len(objects)}) successfully"
+    assert objects[0] is not None, f"First converted object is Falsy: {objects[0]}"
