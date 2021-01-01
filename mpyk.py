@@ -35,10 +35,10 @@ def call_api(trams: Optional[List[str]] = None,
 
     response = requests.post(url=API_URL, data=req_body)
     if response.ok:
-        logging.debug("Got API response: {}".format(response.status_code))
+        logging.debug(f"Got API response: {response.status_code}")
         return response.json()
     else:
-        raise ValueError("Error from API: {}: {}".format(response.status_code, response.content))
+        raise ValueError(f"Error from API: {response.status_code}: {response.content}")
 
 
 def _to_csv_row(call_time: datetime, json_resp: Dict[str, Union[str, float, int]]) -> str:
@@ -55,9 +55,9 @@ def _handle_output(lines: List[str], csv_file: Optional[str] = None) -> None:
             with open(path.abspath(csv_file), "a") as out_file:
                 for l in lines:
                     out_file.write(l + "\n")
-            logging.debug("Wrote {} lines to {}", len(lines), csv_file)
+            logging.debug(f"Wrote {len(lines)} lines to {csv_file}")
         else:
-            raise ValueError("Directory for storing CSV: {} does not exist!".format(csv_dir))
+            raise ValueError(f"Directory for storing CSV: {csv_dir} does not exist!")
     else:
         for l in lines:
             print(l)
@@ -70,10 +70,10 @@ def _get_curr_time(in_utc: bool) -> datetime:
 def _get_and_store(request_time: datetime, csv_path: str, in_utc: bool) -> None:
     api_response = call_api(trams=ALL_TRAMS, buses=ALL_BUSES)
     csv_lines = [_to_csv_row(request_time, line) for line in api_response]
-    logging.debug("Retrieved {} lines of data, storing at: {}", len(csv_lines), csv_path)
+    logging.debug(f"Retrieved {len(csv_lines)} lines of data, storing at: {csv_path}")
     _handle_output(csv_lines, csv_file=csv_path)
     total_time = (_get_curr_time(in_utc) - request_time).total_seconds()
-    logging.info("Retrieved {} lines of data and stored in {:.3f}s!".format(len(csv_lines), total_time))
+    logging.info(f"Retrieved {len(csv_lines)} lines of data and stored in {total_time:.3f}s!")
 
 
 def _setup_logger(level: int = logging.INFO, log_file: Optional[str] = None) -> None:
@@ -82,7 +82,7 @@ def _setup_logger(level: int = logging.INFO, log_file: Optional[str] = None) -> 
         if path.exists(log_directory):
             logging.basicConfig(format='%(levelname)s | %(asctime)s UTC | %(message)s', level=level, filename=log_file)
         else:
-            print("Can not create log file; directory {} does not exists; will use stdout!".format(log_directory))
+            print(f"Can not create log file; directory {log_directory} does not exists; will use stdout!")
             logging.basicConfig(format='%(levelname)s | %(asctime)s UTC | %(message)s', level=level)
     else:
         logging.basicConfig(format='%(levelname)s | %(asctime)s UTC | %(message)s', level=level)
