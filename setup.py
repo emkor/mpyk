@@ -38,9 +38,12 @@ setup(
         "Programming Language :: Python :: 3",
         "Environment :: Console",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: GNU Affero General Public License v3",
+        "Intended Audience :: Education",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
         "Operating System :: POSIX :: Linux",
+        "Operating System :: MacOS",
         "Topic :: Utilities"
     ],
 )

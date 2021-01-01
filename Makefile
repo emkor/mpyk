@@ -26,7 +26,7 @@ lint:
 	@$(VENV_PY3) -m mypy --ignore-missing-imports mpyk
 
 at:
-	@echo "---- Running acceptance tests (requires napi-py on global PATH) ---- "
+	@echo "---- Running acceptance tests ---- "
 	@$(VENV_PY3) -m pytest -ra -v test/acceptance
 
 build:

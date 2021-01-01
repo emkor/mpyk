@@ -24,4 +24,4 @@ jobs:
       - name: Build distributable package
         run: make build
       - name: Install the package globally
-        run: for pkg in $(find dist/napi-py*.tar.gz); do pip3 install $pkg; done
+        run: for pkg in $(find dist/*.tar.gz); do pip3 install $pkg; done
