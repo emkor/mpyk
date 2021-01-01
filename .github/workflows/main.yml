@@ -1,0 +1,25 @@
+name: CI
+
+on: push
+
+jobs:
+
+  test:
+    name: Test with Python ${{ matrix.python-version }}
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        python-version: [ 3.6, 3.7, 3.8 ]
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up virtualenv, install from source
+        run: make config
+      - name: Run unit tests and static analysis
+        run: make test
+      - name: Build distributable package
+        run: make build
