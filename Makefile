@@ -1,5 +1,5 @@
 config: clean setup install
-test: lint at
+test: lint ut at
 all: test build
 
 PY3 = python3
@@ -25,9 +25,13 @@ lint:
 	@echo "---- Running linter ---- "
 	@$(VENV_PY3) -m mypy --ignore-missing-imports mpyk
 
+ut:
+	@echo "---- Running unit tests ---- "
+	@$(VENV_PY3) -m pytest -ra -v -s test/unit
+
 at:
 	@echo "---- Running acceptance tests ---- "
-	@$(VENV_PY3) -m pytest -ra -v test/acceptance
+	@$(VENV_PY3) -m pytest -ra -v -s test/acceptance
 
 build:
 	@echo "---- Building distributable package ---- "

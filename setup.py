@@ -16,7 +16,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="mpyk",
-    version="0.0.1",
+    version="0.0.2",
     description="CLI tool and library for retrieving Wrocław public transit geolocation data",
     author="Mateusz Korzeniowski",
     author_email="emkor93@gmail.com",
