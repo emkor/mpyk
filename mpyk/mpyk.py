@@ -4,37 +4,11 @@ from os import path
 from typing import List, Dict, Union, Optional
 
 import pytz
-import requests
 
-API_URL = "https://mpk.wroc.pl/bus_position"
-ALL_BUSES = ['a', 'c', 'd', 'k', 'n', '100', '101', '102', '103', '104', '105', '106', '107', '108', '109', '110',
-             '111', '112', '113', '114', '115', '116', '118', '119', '120', '121', '122', '124', '125', '126', '127',
-             '128', '129', '130', '131', '132', '133', '134', '136', '140', '141', '142', '144', '145', '146', '147',
-             '148', '149', '150', '206', '240', '241', '243', '245', '246', '247', '248', '249', '250', '251', '253',
-             '255', '257', '259', '319', '325', '602', '607', '609', '612', '715']
-ALL_TRAMS = ['0l', '0p', 't4', 't9', 'zlt', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '14', '15', '17',
-             '20', '23', '24', '31', '32', '33']
+from mpyk import MpykClient
+
 POLAND_TIMEZONE = pytz.timezone("Europe/Warsaw")
 NULL_VAL = "null"
-
-
-def call_api(trams: Optional[List[str]] = None,
-             buses: Optional[List[str]] = None) -> List[Dict[str, Union[str, float, int]]]:
-    if not trams and not buses:
-        raise ValueError("Can not call API without any parameters!")
-
-    req_body = {}
-    if trams:
-        req_body["busList[tram][]"] = sorted([str(t) for t in trams])
-    if buses:
-        req_body["busList[bus][]"] = sorted([str(b) for b in buses])
-
-    response = requests.post(url=API_URL, data=req_body)
-    if response.ok:
-        logging.debug(f"Got API response: {response.status_code}")
-        return response.json()
-    else:
-        raise ValueError(f"Error from API: {response.status_code} {str(response.content)}")
 
 
 def _to_csv_row(call_time: datetime, json_resp: Dict[str, Union[str, float, int]]) -> str:
@@ -64,7 +38,8 @@ def _get_curr_time(in_utc: bool) -> datetime:
 
 
 def _get_and_store(request_time: datetime, csv_path: str, in_utc: bool) -> None:
-    api_response = call_api(trams=ALL_TRAMS, buses=ALL_BUSES)
+    client = MpykClient()
+    api_response = client.get_all_positions_raw()
     csv_lines = [_to_csv_row(request_time, line) for line in api_response]
     logging.debug(f"Retrieved {len(csv_lines)} lines of data, storing at: {csv_path}")
     _handle_output(csv_lines, csv_file=csv_path)
