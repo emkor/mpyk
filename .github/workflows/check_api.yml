@@ -1,0 +1,24 @@
+name: API contract check
+
+on:
+  schedule:
+    - cron: '55 4 * * *'
+  push:
+    branches:
+      - master
+
+jobs:
+  scrape:
+    runs-on: ubuntu-20.04
+    name: Analyze and publish results
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up virtualenv, install from source
+        run: make config
+      - name: Run tests
+        run: make test
