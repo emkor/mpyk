@@ -21,4 +21,4 @@ jobs:
       - name: Set up virtualenv, install from source
         run: make config
       - name: Run tests
-        run: make test
+        run: make at

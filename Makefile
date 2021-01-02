@@ -18,7 +18,7 @@ setup:
 	@$(VENV_PY3) -m pip install --upgrade pip wheel setuptools
 
 install:
-	@echo "---- Installing mpyk in virtualenv ---- "
+	@echo "---- Installing package in virtualenv ---- "
 	@$(VENV_PY3) -m pip install -e .[dev]
 
 lint:
@@ -35,6 +35,6 @@ at:
 
 build:
 	@echo "---- Building distributable package ---- "
-	@$(VENV_PY3) setup.py sdist bdist_wheel --python-tag py3 --dist-dir ./dist
+	@$(VENV_PY3) setup.py sdist --dist-dir ./dist
 
 .PHONY: all config test build clean setup install lint ut at
