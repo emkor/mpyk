@@ -26,11 +26,11 @@ jobs:
       - name: Install the package globally
         run: for pkg in $(find dist/*.tar.gz); do pip3 install $pkg; done
       - name: Archive production artifacts
-          uses: actions/upload-artifact@v2
-          with:
-            name: mpyk-py${{ matrix.python-version }}-.tar.gz
-            path: dist/*.tar.gz
-            retention-days: 1
+        uses: actions/upload-artifact@v2
+        with:
+          name: mpyk-py${{ matrix.python-version }}-.tar.gz
+          path: dist/*.tar.gz
+          retention-days: 1
 
   install_pkg:
     name: Install with Python ${{ matrix.python-version }}
