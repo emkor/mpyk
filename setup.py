@@ -2,8 +2,7 @@ from distutils.core import setup
 from setuptools import find_packages
 
 REQUIREMENTS = [
-    "requests==2.*",
-    "pytz==2020.*",
+    "requests==2.*"
 ]
 
 REQUIREMENTS_DEV = [
@@ -16,8 +15,8 @@ with open("README.md", "r") as fh:
 
 setup(
     name="mpyk",
-    version="0.0.2",
-    description="CLI tool and library for retrieving Wrocław public transit geolocation data",
+    version="0.0.3",
+    description="Library for retrieving Wrocław public transportation geolocation data",
     author="Mateusz Korzeniowski",
     author_email="emkor93@gmail.com",
     long_description=long_description,
@@ -29,17 +28,9 @@ setup(
     extras_require={
         "dev": REQUIREMENTS_DEV
     },
-    entry_points={
-        "console_scripts": [
-            "mpyk = mpyk.main:cli_main"
-        ]
-    },
     classifiers=[
         "Programming Language :: Python :: 3",
-        "Environment :: Console",
         "Intended Audience :: Developers",
-        "Intended Audience :: Education",
-        "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
         "Operating System :: POSIX :: Linux",

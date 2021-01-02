@@ -1,5 +1,7 @@
-# mpyk
-Simple Python 3 CLI script for retrieving Wrocław MPK trams and buses real-time location
+# mpyk ![CI](https://github.com/emkor/mpyk/workflows/CI/badge.svg)
+Simple Python 3 library for retrieving Wrocław MPK trams and buses real-time location
+
+
 
 ## prerequisites
 - Unix, `make`, `git`, `python3` with `pip`
