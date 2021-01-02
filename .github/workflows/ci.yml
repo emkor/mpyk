@@ -60,18 +60,16 @@ jobs:
       - install_pkg
     if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-20.04
-    env:
-      PYTHON_VER: 3.9
     steps:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: $PYTHON_VER
+          python-version: 3.9
       - name: Install publishing tool
         run: pip install --upgrade pip setuptools wheel twine
       - name: Download cached sdist package
         uses: actions/download-artifact@v2
         with:
-          name: py$PYTHON_VER-mpyk.tar.gz
+          name: py3.9-mpyk.tar.gz
       - name: Publish the package
         run: twine upload -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASSWORD }} mpyk-*.tar.gz
