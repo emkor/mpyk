@@ -26,12 +26,12 @@ jobs:
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: mpyk-py${{ matrix.python-version }}.tar.gz
+          name: py${{ matrix.python-version }}-mpyk.tar.gz
           path: dist/*.tar.gz
           retention-days: 1
 
   install_pkg:
-    name: Install with Python ${{ matrix.python-version }}
+    name: Install on Python ${{ matrix.python-version }}
     needs: test
     runs-on: ubuntu-20.04
     strategy:
@@ -45,11 +45,11 @@ jobs:
       - name: Download cached sdist package
         uses: actions/download-artifact@v2
         with:
-          name: mpyk-py${{ matrix.python-version }}.tar.gz
+          name: py${{ matrix.python-version }}-mpyk.tar.gz
       - name: List files
         run: find . -type f | sort
-      - name: Install package globally
-        run: pip install mpyk-py${{ matrix.python-version }}-.tar.gz
+      - name: Install the package globally
+        run: for pkg in $(find *.tar.gz); do pip install $pkg; done
 
   publish:
     name: Publish the package
@@ -71,6 +71,6 @@ jobs:
       - name: Download cached sdist package
         uses: actions/download-artifact@v2
         with:
-          name: mpyk-py$FIRST_NAME.tar.gz
+          name: py${{ matrix.python-version }}-mpyk.tar.gz
       - name: Publish the package
-        run: twine upload -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASSWORD }} mpyk*.tar.gz
+        run: twine upload -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASSWORD }} mpyk-*.tar.gz
