@@ -3,9 +3,6 @@ name: API contract check
 on:
   schedule:
     - cron: '55 4 * * *'
-  push:
-    branches:
-      - master
 
 jobs:
   scrape:

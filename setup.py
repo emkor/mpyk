@@ -15,7 +15,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="mpyk",
-    version="0.0.3",
+    version="0.0.4",
     description="Library for retrieving Wrocław public transportation geolocation data",
     author="Mateusz Korzeniowski",
     author_email="emkor93@gmail.com",

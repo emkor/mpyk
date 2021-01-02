@@ -52,12 +52,12 @@ def test_should_parse_api_resp_into_objects():
         transloc = MpykTransLoc.parse(raw_transloc, ts)
         assert transloc is not None, f"Could not parse {raw_transloc} into meaningful object"
         output.append(transloc)
-    assert output[0] == MpykTransLoc('tram', '0l', 16952122, ts, Decimal(51.118153), Decimal(17.030212))
+    assert output[0] == MpykTransLoc('tram', '0l', 16952122, ts, 51.118153, 17.030212)
 
 
 def test_should_serialize_object():
     ts = datetime(2021, 1, 1, 22, 6, 9, 101)
-    obj = MpykTransLoc('tram', '0l', 16952122, ts, Decimal(51.118153), Decimal(17.030212))
+    obj = MpykTransLoc('tram', '0l', 16952122, ts, 51.118153, 17.030212)
     assert obj.as_api_dict() == {'name': '0l', 'type': 'tram', 'y': 17.030212, 'x': 51.118153, 'k': 16952122}
     assert json.dumps(obj.as_api_dict()) is not None
     assert obj.as_dict() == {'line': '0l', 'kind': 'tram', 'lon': 17.030212, 'lat': 51.118153, 'course': 16952122,
