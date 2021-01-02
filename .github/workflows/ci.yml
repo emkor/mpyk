@@ -42,6 +42,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install publishing tool
+        run: pip install --upgrade pip setuptools wheel twine
       - name: Download cached sdist package
         uses: actions/download-artifact@v2
         with:
@@ -64,13 +66,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: $FIRST_NAME
+          python-version: $PYTHON_VER
       - name: Install publishing tool
-        run: |
-          pip install --upgrade pip setuptools wheel twine
+        run: pip install --upgrade pip setuptools wheel twine
       - name: Download cached sdist package
         uses: actions/download-artifact@v2
         with:
-          name: py${{ matrix.python-version }}-mpyk.tar.gz
+          name: py$PYTHON_VER-mpyk.tar.gz
       - name: Publish the package
         run: twine upload -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASSWORD }} mpyk-*.tar.gz
